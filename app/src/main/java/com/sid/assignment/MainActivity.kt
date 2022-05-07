@@ -2,7 +2,7 @@ package com.sid.assignment
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.gfg.article.materialtabs.*
+import com.sid.assignment.ui.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

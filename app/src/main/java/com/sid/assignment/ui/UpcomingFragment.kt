@@ -1,4 +1,4 @@
-package com.gfg.article.materialtabs
+package com.sid.assignment.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.sid.assignment.R
 
-
-class PopularFragment : Fragment() {
+class UpcomingFragment : Fragment() {
 
     //inflate the layout
     override fun onCreateView(
@@ -15,5 +14,5 @@ class PopularFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) =
-        inflater.inflate(R.layout.fragment_popular, container, false)!!
+        inflater.inflate(R.layout.fragment_upcoming, container, false)!!
 }

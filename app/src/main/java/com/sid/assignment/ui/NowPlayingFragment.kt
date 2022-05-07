@@ -1,4 +1,4 @@
-package com.gfg.article.materialtabs
+package com.sid.assignment.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
