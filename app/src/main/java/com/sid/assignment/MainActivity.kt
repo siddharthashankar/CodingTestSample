@@ -1,30 +1,28 @@
 package com.sid.assignment
 
-import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import com.sid.assignment.ui.main.SectionsPagerAdapter
+import android.os.Bundle
+import com.gfg.article.materialtabs.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
-        val fab: FloatingActionButton = findViewById(R.id.fab)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        // Initializing the ViewPagerAdapter
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+
+        //add fragment to the list
+        adapter.addFragment(NowPlayingFragment(), "Now Playing")
+        adapter.addFragment(PopularFragment(), "Popular")
+        adapter.addFragment(TopRatedFragment(), "Top Rated")
+        adapter.addFragment(UpcomingFragment(), "Upcoming")
+
+        // Adding the Adapter to the ViewPager
+        viewPager.adapter = adapter
+        //bind the viewPager with the TabLayout.
+        tabs.setupWithViewPager(viewPager)
     }
 }
