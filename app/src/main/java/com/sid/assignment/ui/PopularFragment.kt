@@ -1,5 +1,6 @@
 package com.sid.assignment.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import com.sid.assignment.R
 import com.sid.assignment.adapter.MoviesAdapter
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import kotlinx.android.synthetic.main.fragment_popular.*
 
 
 class PopularFragment : Fragment() {
@@ -37,7 +39,7 @@ class PopularFragment : Fragment() {
             false
         )
         popularMovies.layoutManager = popularMoviesLayoutMgr
-        popularMoviesAdapter = MoviesAdapter(mutableListOf())
+        popularMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         popularMovies.adapter = popularMoviesAdapter
 
         getPopularMovies()
@@ -71,7 +73,16 @@ class PopularFragment : Fragment() {
         })
     }
 
-
+    private fun showMovieDetails(movie: Movie) {
+        val intent = Intent(activity, MovieDetailsActivity::class.java)
+        intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
+        intent.putExtra(MOVIE_POSTER, movie.posterPath)
+        intent.putExtra(MOVIE_TITLE, movie.title)
+        intent.putExtra(MOVIE_RATING, movie.rating)
+        intent.putExtra(MOVIE_RELEASE_DATE, movie.releaseDate)
+        intent.putExtra(MOVIE_OVERVIEW, movie.overview)
+        startActivity(intent)
+    }
 
     private fun onError() {
         Toast.makeText(activity, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()

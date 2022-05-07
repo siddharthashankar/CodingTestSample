@@ -4,14 +4,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.sid.assignment.R
 import com.sid.assignment.model.Movie
+import kotlinx.android.synthetic.main.item_movie.view.*
 
 class MoviesAdapter(
-    private var movies: MutableList<Movie>
+    private var movies: MutableList<Movie>,
+    private val onMovieClick: (movie: Movie) -> Unit
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -25,6 +28,7 @@ class MoviesAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.bind(movies[position])
+        holder.itemView.movie_details.text = "Title:"+movies[position].title+"\n"+"Release Date:"+movies[position].releaseDate+"\n"+"Rating:"+movies[position].rating+"\n"+"Vote Count:"+movies[position].voteCount
     }
 
     fun appendMovies(movies: List<Movie>) {
@@ -46,7 +50,7 @@ class MoviesAdapter(
                 .transform(CenterCrop())
                 .into(poster)
 
-           // itemView.setOnClickListener { onMovieClick.invoke(movie) }
+            itemView.setOnClickListener { onMovieClick.invoke(movie) }
         }
     }
 }

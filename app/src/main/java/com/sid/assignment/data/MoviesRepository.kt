@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object MoviesRepository {
 
-    private val api: MovieApi
+    private val movieApi: MovieApi
 
     init {
         val retrofit = Retrofit.Builder()
@@ -17,7 +17,7 @@ object MoviesRepository {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        api = retrofit.create(MovieApi::class.java)
+        movieApi = retrofit.create(MovieApi::class.java)
     }
 
     fun getPopularMovies(
@@ -25,7 +25,7 @@ object MoviesRepository {
         onSuccess: (movies: List<Movie>) -> Unit,
         onError: () -> Unit
     ) {
-        api.getPopularMovies(page = page)
+        movieApi.getPopularMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
                     call: Call<GetMoviesResponse>,
@@ -55,7 +55,7 @@ object MoviesRepository {
         onSuccess: (movies: List<Movie>) -> Unit,
         onError: () -> Unit
     ) {
-        api.getTopRatedMovies(page = page)
+        movieApi.getTopRatedMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
                     call: Call<GetMoviesResponse>,
@@ -85,7 +85,7 @@ object MoviesRepository {
         onSuccess: (movies: List<Movie>) -> Unit,
         onError: () -> Unit
     ) {
-        api.getUpcomingMovies(page = page)
+        movieApi.getUpcomingMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
                     call: Call<GetMoviesResponse>,
