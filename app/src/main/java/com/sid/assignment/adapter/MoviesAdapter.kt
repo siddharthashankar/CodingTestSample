@@ -28,7 +28,7 @@ class MoviesAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.bind(movies[position])
-        holder.itemView.movie_details.text = "Title:"+movies[position].title+"\n"+"Release Date:"+movies[position].releaseDate+"\n"+"Rating:"+movies[position].rating+"\n"+"Vote Count:"+movies[position].voteCount
+        holder.itemView.movie_details.text = "Title: "+movies[position].title+"\n"+"Release Date: "+movies[position].releaseDate+"\n"+"Rating: "+movies[position].rating+"\n"+"Vote Count: "+movies[position].voteCount
     }
 
     fun appendMovies(movies: List<Movie>) {

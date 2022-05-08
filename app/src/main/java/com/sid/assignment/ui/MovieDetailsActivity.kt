@@ -55,7 +55,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         extras.getString(MOVIE_POSTER)?.let { posterPath ->
             Glide.with(this)
-                .load("https://image.tmdb.org/t/p/w342$posterPath")
+                .load("https://image.tmdb.org/t/p/w200$posterPath")
                 .transform(CenterCrop())
                 .into(poster)
         }
