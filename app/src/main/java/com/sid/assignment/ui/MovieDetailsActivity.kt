@@ -15,6 +15,7 @@ const val MOVIE_TITLE = "extra_movie_title"
 const val MOVIE_RATING = "extra_movie_rating"
 const val MOVIE_RELEASE_DATE = "extra_movie_release_date"
 const val MOVIE_OVERVIEW = "extra_movie_overview"
+const val MOVIE_VOTECOUNT = "extra_movie_votecount"
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -24,6 +25,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var rating: RatingBar
     private lateinit var releaseDate: TextView
     private lateinit var overview: TextView
+    private lateinit var voteCount: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         rating = findViewById(R.id.movie_rating)
         releaseDate = findViewById(R.id.movie_release_date)
         overview = findViewById(R.id.movie_overview)
+        voteCount = findViewById(R.id.movie_votecount)
 
         val extras = intent.extras
 
@@ -62,7 +65,8 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         title.text = extras.getString(MOVIE_TITLE, "")
         rating.rating = extras.getFloat(MOVIE_RATING, 0f) / 2
-        releaseDate.text = extras.getString(MOVIE_RELEASE_DATE, "")
+        releaseDate.text = "Release Date: "+extras.getString(MOVIE_RELEASE_DATE, "")
+        voteCount.text = "Vote Count: "+extras.getInt(MOVIE_VOTECOUNT, 0).toString()
         overview.text = extras.getString(MOVIE_OVERVIEW, "")
     }
 }

@@ -63,8 +63,19 @@
             android:layout_height="wrap_content"
             android:textColor="#757575"
             android:textSize="12sp"
+            android:text="kjhwfgih"
             app:layout_constraintStart_toStartOf="@+id/movie_title"
             app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+
+        <TextView
+            android:id="@+id/movie_votecount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#757575"
+            android:textSize="12sp"
+            android:text="VC"
+            app:layout_constraintStart_toStartOf="@+id/movie_title"
+            app:layout_constraintTop_toBottomOf="@+id/movie_release_date" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/movie_poster_title_barrier"
