@@ -80,6 +80,7 @@ class NowPlayingFragment :Fragment() {
         intent.putExtra(MOVIE_RELEASE_DATE, movie.releaseDate)
         intent.putExtra(MOVIE_OVERVIEW, movie.overview)
         intent.putExtra(MOVIE_VOTECOUNT, movie.voteCount)
+        intent.putExtra(MOVIE_VOTECOUNT, movie.voteCount)
         startActivity(intent)
     }
 
