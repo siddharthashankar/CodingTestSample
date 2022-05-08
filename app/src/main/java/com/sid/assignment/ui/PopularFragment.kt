@@ -13,8 +13,6 @@ import com.sid.assignment.R
 import com.sid.assignment.adapter.MoviesAdapter
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
-import kotlinx.android.synthetic.main.fragment_popular.*
-
 
 class PopularFragment : Fragment() {
     private lateinit var popularMovies: RecyclerView
