@@ -40,6 +40,10 @@ class MoviesAdapter(
         notifyDataSetChanged()
     }
 
+    fun clearMovies() {
+        this.movies.clear()
+    }
+
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val poster: ImageView = itemView.findViewById(R.id.item_movie_poster)

@@ -25,7 +25,7 @@ object MoviesRepository {
         onSuccess: (movies: List<Movie>) -> Unit,
         onError: () -> Unit
     ) {
-        movieApi.getPopularMovies(page = page)
+        movieApi.getNowPlayingMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
                     call: Call<GetMoviesResponse>,
@@ -138,5 +138,36 @@ object MoviesRepository {
                     onError.invoke()
                 }
             })
+    }
+
+    fun getSearchMovies(
+            page: Int = 1,
+            query: String,
+            onSuccess: (movies: List<Movie>) -> Unit,
+            onError: () -> Unit
+    ) {
+        movieApi.getSearchMovies(page = page, query = query)
+                .enqueue(object : Callback<GetMoviesResponse> {
+                    override fun onResponse(
+                            call: Call<GetMoviesResponse>,
+                            response: Response<GetMoviesResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val responseBody = response.body()
+
+                            if (responseBody != null) {
+                                onSuccess.invoke(responseBody.movies)
+                            } else {
+                                onError.invoke()
+                            }
+                        } else {
+                            onError.invoke()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                        onError.invoke()
+                    }
+                })
     }
 }

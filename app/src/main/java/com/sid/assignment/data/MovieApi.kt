@@ -29,4 +29,13 @@ interface MovieApi {
         @Query("api_key") apiKey: String = "0e7274f05c36db12cbe71d9ab0393d47",
         @Query("page") page: Int
     ): Call<GetMoviesResponse>
+
+    @GET("search/movie")
+    fun getSearchMovies(
+            @Query("api_key") apiKey: String = "0e7274f05c36db12cbe71d9ab0393d47",
+            @Query("page") page: Int,
+            @Query("query") query: String //= "Harry Potter"
+    ): Call<GetMoviesResponse>
 }
+
+//https://api.themoviedb.org/3/search/movie?query=fi&api_key=0e7274f05c36db12cbe71d9ab0393d47
