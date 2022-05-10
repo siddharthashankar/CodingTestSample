@@ -4,21 +4,9 @@ import com.sid.assignment.model.Movie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-object MoviesRepository {
-
-    private val movieApi: MovieApi
-
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        movieApi = retrofit.create(MovieApi::class.java)
-    }
+class MoviesRepository @Inject constructor(private val movieApi: MovieApi) {
 
     fun getNowPlayingMovies(
         page: Int = 1,
@@ -141,33 +129,33 @@ object MoviesRepository {
     }
 
     fun getSearchMovies(
-            page: Int = 1,
-            query: String,
-            onSuccess: (movies: List<Movie>) -> Unit,
-            onError: () -> Unit
+        page: Int = 1,
+        query: String,
+        onSuccess: (movies: List<Movie>) -> Unit,
+        onError: () -> Unit
     ) {
         movieApi.getSearchMovies(page = page, query = query)
-                .enqueue(object : Callback<GetMoviesResponse> {
-                    override fun onResponse(
-                            call: Call<GetMoviesResponse>,
-                            response: Response<GetMoviesResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
+            .enqueue(object : Callback<GetMoviesResponse> {
+                override fun onResponse(
+                    call: Call<GetMoviesResponse>,
+                    response: Response<GetMoviesResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
 
-                            if (responseBody != null) {
-                                onSuccess.invoke(responseBody.movies)
-                            } else {
-                                onError.invoke()
-                            }
+                        if (responseBody != null) {
+                            onSuccess.invoke(responseBody.movies)
                         } else {
                             onError.invoke()
                         }
-                    }
-
-                    override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                    } else {
                         onError.invoke()
                     }
-                })
+                }
+
+                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                    onError.invoke()
+                }
+            })
     }
 }

@@ -39,8 +39,6 @@ dependencies {
     def coroutinesVersion = '1.4.3'
     def retrofitVersion = "2.9.0"
     def lifeCycleVersion = '2.2.0'
-    def daggerHiltVersion = '2.31.2-alpha'
-    def hiltLifeCycleVersion = '1.0.0-alpha03'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.5.0'
@@ -74,15 +72,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifeCycleVersion"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersion"
+
+    //Livedata
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleVersion"
-
-    /*//Hilt for di
-    implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
-    kapt "com.google.dagger:hilt-android-compiler:$daggerHiltVersion"*/
-
-    // Hilt ViewModel extension
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltLifeCycleVersion"
-    kapt "androidx.hilt:hilt-compiler:$hiltLifeCycleVersion"
 
     // Room
     implementation "androidx.room:room-runtime:2.2.6"

@@ -7,24 +7,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.R
 import com.sid.assignment.adapter.MoviesAdapter
+import com.sid.assignment.appComponent
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import javax.inject.Inject
 
 class PopularFragment : Fragment() {
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private lateinit var viewModel: MoviesViewModel
+
     private lateinit var popularMovies: RecyclerView
     private lateinit var popularMoviesAdapter: MoviesAdapter
     private lateinit var popularMoviesLayoutMgr: LinearLayoutManager
     private var popularMoviesPage = 1
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this, factory).get(MoviesViewModel::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_popular,container,false)
 
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,21 +55,19 @@ class PopularFragment : Fragment() {
         popularMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         popularMovies.adapter = popularMoviesAdapter
 
-        getPopularMovies()
     }
 
-    private fun getPopularMovies() {
-        MoviesRepository.getPopularMovies(
-            popularMoviesPage,
-            ::onPopularMoviesFetched,
-            ::onError
-        )
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel.popularMovies.observe(viewLifecycleOwner, Observer { movies ->
+            popularMoviesAdapter.appendMovies(movies)
+            attachPopularMoviesOnScrollListener()
+        })
+
+        viewModel.error.observe(viewLifecycleOwner, Observer { onError() })
     }
 
-    private fun onPopularMoviesFetched(movies: List<Movie>) {
-        popularMoviesAdapter.appendMovies(movies)
-        attachPopularMoviesOnScrollListener()
-    }
     private fun attachPopularMoviesOnScrollListener() {
         popularMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -65,8 +78,7 @@ class PopularFragment : Fragment() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     popularMovies.removeOnScrollListener(this)
                     popularMoviesPage++
-                    getPopularMovies()
-                }
+                    viewModel.getPopularMovies(popularMoviesPage)                }
             }
         })
     }

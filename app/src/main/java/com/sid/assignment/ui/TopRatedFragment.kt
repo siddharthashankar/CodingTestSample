@@ -7,19 +7,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.R
 import com.sid.assignment.adapter.MoviesAdapter
+import com.sid.assignment.appComponent
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import javax.inject.Inject
 
 class TopRatedFragment : Fragment() {
-
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private lateinit var viewModel: MoviesViewModel
     private lateinit var topRatedMovies: RecyclerView
     private lateinit var topRatedMoviesAdapter: MoviesAdapter
     private lateinit var topRatedMoviesLayoutMgr: LinearLayoutManager
     private var topRatedMoviesPage = 1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this, factory).get(MoviesViewModel::class.java)
+    }
 
     //inflate the layout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,20 +53,17 @@ class TopRatedFragment : Fragment() {
         topRatedMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         topRatedMovies.adapter = topRatedMoviesAdapter
 
-        getTopRatedMovies()
     }
 
-    private fun getTopRatedMovies() {
-        MoviesRepository.getTopRatedMovies(
-            topRatedMoviesPage,
-            ::onTopRatedMoviesFetched,
-            ::onError
-        )
-    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-    private fun onTopRatedMoviesFetched(movies: List<Movie>) {
-        topRatedMoviesAdapter.appendMovies(movies)
-        attachTopRatedMoviesOnScrollListener()
+        viewModel.topRatedMovies.observe(viewLifecycleOwner, Observer { movies ->
+            topRatedMoviesAdapter.appendMovies(movies)
+            attachTopRatedMoviesOnScrollListener()
+        })
+
+        viewModel.error.observe(viewLifecycleOwner, Observer { onError() })
     }
 
     private fun attachTopRatedMoviesOnScrollListener() {
@@ -66,7 +76,7 @@ class TopRatedFragment : Fragment() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     topRatedMovies.removeOnScrollListener(this)
                     topRatedMoviesPage++
-                    getTopRatedMovies()
+                    viewModel.getTopRatedMovies(topRatedMoviesPage)
                 }
             }
         })

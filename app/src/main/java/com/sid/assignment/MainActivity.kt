@@ -3,18 +3,27 @@ package com.sid.assignment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.sid.assignment.ui.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.adapter.MoviesAdapter
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private lateinit var viewModel: MoviesViewModel
+
     private lateinit var searchView: SearchView
     private var currentSearchQuery: String = ""
     private lateinit var searchMovies: RecyclerView
@@ -23,8 +32,10 @@ class MainActivity : AppCompatActivity() {
     private var searchMoviesPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProviders.of(this, factory).get(MoviesViewModel::class.java)
 
         // Initializing the ViewPagerAdapter
         val adapter = ViewPagerAdapter(supportFragmentManager)
@@ -52,17 +63,17 @@ class MainActivity : AppCompatActivity() {
         searchMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         searchMovies.adapter = searchMoviesAdapter
 
-        getSearchMovies(currentSearchQuery)
         getSearchMovie()
     }
 
-    private fun getSearchMovies(newSearchText: String) {
-        MoviesRepository.getSearchMovies(
-                searchMoviesPage,
-                newSearchText,
-                ::onSearchMoviesFetched,
-                ::onError
-        )
+    override fun onStart() {
+        super.onStart()
+        viewModel.searchgMovies.observe(this, Observer { movies ->
+            searchMoviesAdapter.appendMovies(movies)
+            attachSearchMoviesOnScrollListener()
+        })
+
+        viewModel.error.observe(this, Observer { onError() })
     }
 
     private fun onSearchMoviesFetched(movies: List<Movie>) {
@@ -80,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     searchMovies.removeOnScrollListener(this)
                     searchMoviesPage++
-                    getSearchMovies(currentSearchQuery)
+                    viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
                 }
             }
         })
@@ -99,7 +110,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onError() {
-        Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
+        Log.i("Error","Something went wrong...")
     }
 
     private fun getSearchMovie(){
@@ -114,7 +125,8 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String): Boolean {
                 searchMoviesAdapter.clearMovies()
                 currentSearchQuery = newText
-                getSearchMovies(currentSearchQuery)
+
+                viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
                 if (currentSearchQuery.length < 1){
                     searchMoviesAdapter.clearMovies()
                     showAppBarAndViewPager()

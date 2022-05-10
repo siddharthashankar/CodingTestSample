@@ -7,18 +7,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.R
 import com.sid.assignment.adapter.MoviesAdapter
-import com.sid.assignment.data.MoviesRepository
+import com.sid.assignment.appComponent
 import com.sid.assignment.model.Movie
+import javax.inject.Inject
 
 class UpcomingFragment : Fragment() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private lateinit var viewModel: MoviesViewModel
     private lateinit var upcomingMovies: RecyclerView
     private lateinit var upcomingMoviesAdapter: MoviesAdapter
     private lateinit var upcomingMoviesLayoutMgr: LinearLayoutManager
     private var upcomingMoviesPage = 1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this, factory).get(MoviesViewModel::class.java)
+    }
 
     //inflate the layout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -39,15 +52,17 @@ class UpcomingFragment : Fragment() {
         upcomingMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         upcomingMovies.adapter = upcomingMoviesAdapter
 
-        getUpcomingMovies()
     }
 
-    private fun getUpcomingMovies() {
-        MoviesRepository.getUpcomingMovies(
-            upcomingMoviesPage,
-            ::onUpcomingMoviesFetched,
-            ::onError
-        )
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel.upcomingMovies.observe(viewLifecycleOwner, Observer { movies ->
+            upcomingMoviesAdapter.appendMovies(movies)
+            attachUpcomingMoviesOnScrollListener()
+        })
+
+        viewModel.error.observe(viewLifecycleOwner, Observer { onError() })
     }
 
     private fun onUpcomingMoviesFetched(movies: List<Movie>) {
@@ -65,7 +80,7 @@ class UpcomingFragment : Fragment() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     upcomingMovies.removeOnScrollListener(this)
                     upcomingMoviesPage++
-                    getUpcomingMovies()
+                    viewModel.getUpcomingMovies(upcomingMoviesPage)
                 }
             }
         })
