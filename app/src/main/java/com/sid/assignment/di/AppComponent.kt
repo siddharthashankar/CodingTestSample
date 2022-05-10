@@ -1,8 +1,10 @@
 package com.sid.assignment.di
 
 import android.app.Application
+import com.sid.assignment.db.DatabaseModule
 import com.sid.assignment.ui.MovieDetailsActivity
 import com.sid.assignment.ui.NowPlayingFragment
+import com.sid.assignment.ui.WatchListFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -10,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        DatabaseModule::class
+        DatabaseModule::class,
+        ViewModelModule::class
     ]
 )
 interface AppComponent {
@@ -26,7 +29,7 @@ interface AppComponent {
     fun inject(fragment: NowPlayingFragment)
 
 
-   // fun inject(fragment: WatchListFragment)
+    fun inject(fragment: WatchListFragment)
 
     fun inject(activity: MovieDetailsActivity)
 

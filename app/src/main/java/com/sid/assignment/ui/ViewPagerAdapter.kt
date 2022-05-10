@@ -29,6 +29,6 @@ class ViewPagerAdapter(supportFragmentManager: FragmentManager) :
     fun addFragment(fragment: Fragment, title: String) {
         //add each fragment and its title to the array list
         mFragmentList.add(fragment)
-        mFragmentTitleList.add(title)
+        mFragmentTitleList.add(title.toLowerCase())
     }
 }

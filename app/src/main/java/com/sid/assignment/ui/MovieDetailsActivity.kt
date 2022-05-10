@@ -41,7 +41,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var movieRating = 0f
     private var movieReleaseDate = ""
     private var movieOverview = ""
-    private var moviewVoteCount = ""
+    private var movieVoteCount = 0
 
     @Inject
     lateinit var db: AppDatabase
@@ -77,7 +77,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         movieTitle = extras.getString(MOVIE_TITLE, "")
         movieRating = extras.getFloat(MOVIE_RATING, 0f)
         movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
-        moviewVoteCount = extras.getString(MOVIE_VOTECOUNT, "")
+        movieVoteCount = extras.getInt(MOVIE_VOTECOUNT, 0)
         movieOverview = extras.getString(MOVIE_OVERVIEW, "")
 
         extras.getString(MOVIE_BACKDROP)?.let { backdropPath ->
@@ -97,7 +97,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         title.text = movieTitle
         rating.rating = movieRating / 2
         releaseDate.text = "Release Date: "+movieReleaseDate
-        voteCount.text = "Vote Count: "+moviewVoteCount
+        voteCount.text = "Vote Count: "+movieVoteCount
         overview.text = movieOverview
 
         /*title.text = extras.getString(MOVIE_TITLE, "")
@@ -131,7 +131,9 @@ class MovieDetailsActivity : AppCompatActivity() {
                         moviePoster,
                         movieBackdrop,
                         movieRating,
-                        movieReleaseDate
+                        movieReleaseDate,
+                        movieVoteCount
+
                 )
                 db.movieDao().insert(entity)
                 addToWatchList.text = getString(R.string.remove_from_watch_list)

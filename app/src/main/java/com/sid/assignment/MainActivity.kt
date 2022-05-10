@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(PopularFragment(), "Popular")
         adapter.addFragment(TopRatedFragment(), "Top Rated")
         adapter.addFragment(UpcomingFragment(), "Upcoming")
+        adapter.addFragment(WatchListFragment(), "Fav")
 
         // Adding the Adapter to the ViewPager
         viewPager.adapter = adapter
