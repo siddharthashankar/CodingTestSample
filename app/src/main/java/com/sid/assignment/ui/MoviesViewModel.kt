@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MoviesViewModel @Inject constructor(
-    private val repository: MoviesRepository
+        private val repository: MoviesRepository
 ) : ViewModel() {
 
     private val _nowPlayingMovies = MutableLiveData<List<Movie>>()
@@ -22,15 +22,15 @@ class MoviesViewModel @Inject constructor(
 
     private val _popularMovies = MutableLiveData<List<Movie>>()
     val popularMovies: LiveData<List<Movie>>
-    get() = _popularMovies
+        get() = _popularMovies
 
     private val _topRatedMovies = MutableLiveData<List<Movie>>()
     val topRatedMovies: LiveData<List<Movie>>
-    get() = _topRatedMovies
+        get() = _topRatedMovies
 
     private val _upcomingMovies = MutableLiveData<List<Movie>>()
     val upcomingMovies: LiveData<List<Movie>>
-    get() = _upcomingMovies
+        get() = _upcomingMovies
 
     private val _searchMovies = MutableLiveData<List<Movie>>()
     val searchgMovies: LiveData<List<Movie>>
@@ -43,84 +43,87 @@ class MoviesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getNowPlayingMovies()
+            getPopularMovies()
+            getTopRatedMovies()
+            getUpcomingMovies()
         }
-
-        getPopularMovies()
-        getTopRatedMovies()
-        getUpcomingMovies()
     }
 
-    suspend fun getNowPlayingMovies(page: Int = 1){
+    suspend fun getNowPlayingMovies(page: Int = 1) {
 
-        val result = withContext(Dispatchers.IO){
+        val result = withContext(Dispatchers.IO) {
             repository.getNowPlayingMovies(page)
         }
 
-
         result.let { networkResult ->
-            when(networkResult){
+            when (networkResult) {
                 is NetworkResult.Success -> {
                     _nowPlayingMovies.value = networkResult.data
                 }
                 is NetworkResult.Error -> {
-
+                    _error.value = true
                 }
             }
 
         }
     }
 
-    private fun onNowPlayingMovieFetched(movies: List<Movie>) {
-        _nowPlayingMovies.value = movies
+    suspend fun getPopularMovies(page: Int = 1) {
+        val result = withContext(Dispatchers.IO) {
+            repository.getPopularMovies(page)
+        }
+
+        result.let { networkResult ->
+            when (networkResult) {
+                is NetworkResult.Success -> {
+                    _popularMovies.value = networkResult.data
+                }
+            }
+        }
+
     }
 
-    fun getPopularMovies(page: Int = 1) {
-        repository.getPopularMovies(
-            page,
-            ::onPopularMoviesFetched,
-            ::onError
-        )
+    suspend fun getTopRatedMovies(page: Int = 1) {
+        val result = withContext(Dispatchers.IO) {
+            repository.getTopRatedMovies(page)
+        }
+
+        result.let { networkResult ->
+            when (networkResult) {
+                is NetworkResult.Success -> {
+                    _topRatedMovies.value = networkResult.data
+
+                }
+            }
+        }
     }
 
-    private fun onPopularMoviesFetched(movies: List<Movie>) {
-        _popularMovies.value = movies
+    suspend fun getUpcomingMovies(page: Int = 1) {
+        val result = withContext(Dispatchers.IO) {
+            repository.getUpcomingMovies(page)
+        }
+
+        result.let { networkResult ->
+            when (networkResult) {
+                is NetworkResult.Success -> {
+                    _upcomingMovies.value = networkResult.data
+                }
+            }
+        }
     }
 
-    fun getTopRatedMovies(page: Int = 1) {
-        repository.getTopRatedMovies(
-            page,
-            ::onTopRatedMoviesFetched,
-            ::onError
-        )
-    }
+    suspend fun getSearchMovies(page: Int = 1, query: String) {
+        val result= withContext(Dispatchers.IO){
+            repository.getSearchMovies(page, query)
+        }
 
-    private fun onTopRatedMoviesFetched(movies: List<Movie>) {
-        _topRatedMovies.value = movies
-    }
-
-    fun getUpcomingMovies(page: Int = 1) {
-        repository.getUpcomingMovies(
-            page,
-            ::onUpcomingMoviesFetched,
-            ::onError
-        )
-    }
-
-    private fun onUpcomingMoviesFetched(movies: List<Movie>) {
-        _upcomingMovies.value = movies
-    }
-
-    fun getSearchMovies(page: Int = 1, query: String,) {
-        repository.getSearchMovies(
-            page,
-            query,
-            ::onSearchMoviesFetched,
-            ::onError
-        )
-    }
-
-    private fun onSearchMoviesFetched(movies: List<Movie>) {
-        _searchMovies.value = movies
+        result.let { networkResult ->
+            when (networkResult) {
+                is NetworkResult.Success -> {
+                    _searchMovies.value = networkResult.data
+                }
+            }
+        }
     }
 
     private fun onError() {

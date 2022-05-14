@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.R
@@ -17,6 +18,7 @@ import com.sid.assignment.adapter.MoviesAdapter
 import com.sid.assignment.appComponent
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TopRatedFragment : Fragment() {
@@ -76,7 +78,9 @@ class TopRatedFragment : Fragment() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     topRatedMovies.removeOnScrollListener(this)
                     topRatedMoviesPage++
-                    viewModel.getTopRatedMovies(topRatedMoviesPage)
+                    lifecycleScope.launch {
+                        viewModel.getTopRatedMovies(topRatedMoviesPage)
+                    }
                 }
             }
         })

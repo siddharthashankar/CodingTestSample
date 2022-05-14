@@ -11,176 +11,138 @@ import kotlin.coroutines.suspendCoroutine
 
 class MoviesRepository @Inject constructor(private val movieApi: MovieApi) {
 
-    suspend fun getNowPlayingMovies(
-        page: Int = 1
-    ): NetworkResult<List<Movie>> {
+    suspend fun getNowPlayingMovies(page: Int = 1): NetworkResult<List<Movie>> {
         return suspendCoroutine { continuation ->
             movieApi.getNowPlayingMovies(page = page)
                     .enqueue(object : Callback<GetMoviesResponse> {
                         override fun onResponse(call: Call<GetMoviesResponse>, response: Response<GetMoviesResponse>) {
-                            if (response.isSuccessful){
+                            if (response.isSuccessful) {
                                 val responseBody = response.body()
-                                if (responseBody != null){
-                                    continuation.resume( NetworkResult.Success(responseBody.movies))
-                                }else{
+                                if (responseBody != null) {
+                                    continuation.resume(NetworkResult.Success(responseBody.movies))
+                                } else {
                                     NetworkResult.Success(response.message())
                                 }
                             }
                         }
 
                         override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-
+                            continuation.resume(NetworkResult.Error(call.toString() + "," + t.message))
                         }
 
                     })
         }
-
-         /*movieApi.getNowPlayingMovies(page = page)
-            .enqueue(object : Callback<GetMoviesResponse> {
-                override fun onResponse(
-                    call: Call<GetMoviesResponse>,
-                    response: Response<GetMoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-
-                        if (responseBody != null) {
-                            //onSuccess.invoke(responseBody.movies)
-                            NetworkResult.Success(responseBody.movies)
-                        } else {
-                            //onError.invoke()
-                            NetworkResult.Error(response.message())
-                        }
-                    } else {
-                        //onError.invoke()
-                    }
-                }
-
-                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                   // onError.invoke()
-                    NetworkResult.Error(t.message.toString())
-                }
-            })*/
     }
 
-    fun getPopularMovies(
-        page: Int = 1,
-        onSuccess: (movies: List<Movie>) -> Unit,
-        onError: () -> Unit
-    ) {
-        movieApi.getPopularMovies(page = page)
-            .enqueue(object : Callback<GetMoviesResponse> {
-                override fun onResponse(
-                    call: Call<GetMoviesResponse>,
-                    response: Response<GetMoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
+    suspend fun getPopularMovies(page: Int = 1): NetworkResult<List<Movie>> {
+        return suspendCoroutine { continuation ->
+            movieApi.getPopularMovies(page = page)
+                    .enqueue(object : Callback<GetMoviesResponse> {
+                        override fun onResponse(
+                                call: Call<GetMoviesResponse>,
+                                response: Response<GetMoviesResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()
 
-                        if (responseBody != null) {
-                            onSuccess.invoke(responseBody.movies)
-                        } else {
-                            onError.invoke()
+                                if (responseBody != null) {
+                                    continuation.resume(NetworkResult.Success(responseBody.movies))
+                                } else {
+                                    NetworkResult.Success(response.message())
+                                }
+                            } else {
+                                NetworkResult.Success(response.message())
+                            }
                         }
-                    } else {
-                        onError.invoke()
-                    }
-                }
 
-                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    onError.invoke()
-                }
-            })
+                        override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                            continuation.resume(NetworkResult.Error(call.toString() + "," + t.message))
+                        }
+                    })
+        }
     }
 
-    fun getTopRatedMovies(
-        page: Int = 1,
-        onSuccess: (movies: List<Movie>) -> Unit,
-        onError: () -> Unit
-    ) {
-        movieApi.getTopRatedMovies(page = page)
-            .enqueue(object : Callback<GetMoviesResponse> {
-                override fun onResponse(
-                    call: Call<GetMoviesResponse>,
-                    response: Response<GetMoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
+    suspend fun getTopRatedMovies(page: Int = 1): NetworkResult<List<Movie>> {
+        return suspendCoroutine { continuation ->
+            movieApi.getTopRatedMovies(page = page)
+                    .enqueue(object : Callback<GetMoviesResponse> {
+                        override fun onResponse(
+                                call: Call<GetMoviesResponse>,
+                                response: Response<GetMoviesResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()
 
-                        if (responseBody != null) {
-                            onSuccess.invoke(responseBody.movies)
-                        } else {
-                            onError.invoke()
+                                if (responseBody != null) {
+                                    continuation.resume(NetworkResult.Success(responseBody.movies))
+                                } else {
+                                    NetworkResult.Success(response.message())
+                                }
+                            } else {
+                                NetworkResult.Success(response.message())
+                            }
                         }
-                    } else {
-                        onError.invoke()
-                    }
-                }
 
-                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    onError.invoke()
-                }
-            })
+                        override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                            continuation.resume(NetworkResult.Error(call.toString() + "," + t.message))
+                        }
+                    })
+        }
     }
 
-    fun getUpcomingMovies(
-        page: Int = 1,
-        onSuccess: (movies: List<Movie>) -> Unit,
-        onError: () -> Unit
-    ) {
-        movieApi.getUpcomingMovies(page = page)
-            .enqueue(object : Callback<GetMoviesResponse> {
-                override fun onResponse(
-                    call: Call<GetMoviesResponse>,
-                    response: Response<GetMoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
+    suspend fun getUpcomingMovies(page: Int = 1): NetworkResult<List<Movie>> {
+        return suspendCoroutine { continuation ->
+            movieApi.getUpcomingMovies(page = page)
+                    .enqueue(object : Callback<GetMoviesResponse> {
+                        override fun onResponse(
+                                call: Call<GetMoviesResponse>,
+                                response: Response<GetMoviesResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()
 
-                        if (responseBody != null) {
-                            onSuccess.invoke(responseBody.movies)
-                        } else {
-                            onError.invoke()
+                                if (responseBody != null) {
+                                    continuation.resume(NetworkResult.Success(responseBody.movies))
+                                } else {
+                                    NetworkResult.Success(response.message())
+                                }
+                            } else {
+                                NetworkResult.Success(response.message())
+                            }
                         }
-                    } else {
-                        onError.invoke()
-                    }
-                }
 
-                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    onError.invoke()
-                }
-            })
+                        override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                            continuation.resume(NetworkResult.Error(call.toString() + "," + t.message))
+                        }
+                    })
+        }
     }
 
-    fun getSearchMovies(
-        page: Int = 1,
-        query: String,
-        onSuccess: (movies: List<Movie>) -> Unit,
-        onError: () -> Unit
-    ) {
-        movieApi.getSearchMovies(page = page, query = query)
-            .enqueue(object : Callback<GetMoviesResponse> {
-                override fun onResponse(
-                    call: Call<GetMoviesResponse>,
-                    response: Response<GetMoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
+    suspend fun getSearchMovies(page: Int = 1, query: String): NetworkResult<List<Movie>> {
+        return suspendCoroutine { continuation ->
+            movieApi.getSearchMovies(page = page, query = query)
+                    .enqueue(object : Callback<GetMoviesResponse> {
+                        override fun onResponse(
+                                call: Call<GetMoviesResponse>,
+                                response: Response<GetMoviesResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()
 
-                        if (responseBody != null) {
-                            onSuccess.invoke(responseBody.movies)
-                        } else {
-                            onError.invoke()
+                                if (responseBody != null) {
+                                    continuation.resume(NetworkResult.Success(responseBody.movies))
+                                } else {
+                                    NetworkResult.Success(response.message())
+                                }
+                            } else {
+                                NetworkResult.Success(response.message())
+                            }
                         }
-                    } else {
-                        onError.invoke()
-                    }
-                }
 
-                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    onError.invoke()
-                }
-            })
+                        override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                            continuation.resume(NetworkResult.Error(call.toString() + "," + t.message))
+                        }
+                    })
+        }
     }
 }

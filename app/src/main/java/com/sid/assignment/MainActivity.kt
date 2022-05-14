@@ -12,11 +12,13 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sid.assignment.adapter.MoviesAdapter
 import com.sid.assignment.data.MoviesRepository
 import com.sid.assignment.model.Movie
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -91,7 +93,10 @@ class MainActivity : AppCompatActivity() {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     searchMovies.removeOnScrollListener(this)
                     searchMoviesPage++
-                    viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
+                    lifecycleScope.launch {
+                        viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
+                    }
+
                 }
             }
         })
@@ -110,10 +115,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onError() {
-        Log.i("Error","Something went wrong...")
+        Log.i("Error", "Something went wrong...")
     }
 
-    private fun getSearchMovie(){
+    private fun getSearchMovie() {
         searchView = findViewById(R.id.search_view)
         searchView.isFocusable = true
         searchView.isIconified = false
@@ -122,12 +127,14 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String): Boolean {
                 searchMoviesAdapter.clearMovies()
                 currentSearchQuery = newText
-
-                viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
-                if (currentSearchQuery.length < 1){
+                lifecycleScope.launch {
+                    viewModel.getSearchMovies(searchMoviesPage, currentSearchQuery)
+                }
+                if (currentSearchQuery.length < 1) {
                     searchMoviesAdapter.clearMovies()
                     showAppBarAndViewPager()
                 } else {
@@ -145,13 +152,13 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    fun hideAppBarAndViewPager(){
+    fun hideAppBarAndViewPager() {
         appBarLayout.visibility = View.GONE
         viewPager.visibility = View.GONE
         search_movies.visibility = View.VISIBLE
     }
 
-    fun showAppBarAndViewPager(){
+    fun showAppBarAndViewPager() {
         appBarLayout.visibility = View.VISIBLE
         viewPager.visibility = View.VISIBLE
         search_movies.visibility = View.GONE
