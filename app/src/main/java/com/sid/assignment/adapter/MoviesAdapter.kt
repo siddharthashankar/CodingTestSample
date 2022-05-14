@@ -13,7 +13,7 @@ import com.sid.assignment.model.Movie
 import kotlinx.android.synthetic.main.item_movie.view.*
 
 class MoviesAdapter(
-    private var movies: MutableList<Movie>,
+    var movies: MutableList<Movie>,
     private val onMovieClick: (movie: Movie) -> Unit
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 

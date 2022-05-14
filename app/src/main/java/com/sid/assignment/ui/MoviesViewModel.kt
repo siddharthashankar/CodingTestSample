@@ -3,8 +3,13 @@ package com.sid.assignment.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sid.assignment.data.MoviesRepository
+import com.sid.assignment.data.NetworkResult
 import com.sid.assignment.model.Movie
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MoviesViewModel @Inject constructor(
@@ -36,18 +41,33 @@ class MoviesViewModel @Inject constructor(
         get() = _error
 
     init {
-        getNowPlayingMovies()
+        viewModelScope.launch {
+            getNowPlayingMovies()
+        }
+
         getPopularMovies()
         getTopRatedMovies()
         getUpcomingMovies()
     }
 
-    fun getNowPlayingMovies(page: Int = 1){
-        repository.getNowPlayingMovies(
-            page,
-            ::onNowPlayingMovieFetched,
-            ::onError
-        )
+    suspend fun getNowPlayingMovies(page: Int = 1){
+
+        val result = withContext(Dispatchers.IO){
+            repository.getNowPlayingMovies(page)
+        }
+
+
+        result.let { networkResult ->
+            when(networkResult){
+                is NetworkResult.Success -> {
+                    _nowPlayingMovies.value = networkResult.data
+                }
+                is NetworkResult.Error -> {
+
+                }
+            }
+
+        }
     }
 
     private fun onNowPlayingMovieFetched(movies: List<Movie>) {
